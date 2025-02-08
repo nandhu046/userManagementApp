@@ -4,6 +4,10 @@ import RotatingLines from 'react-loader-spinner'
 
 import axios from 'axios'
 
+import UserForm from '../UserForm'
+
+import ErrorBoundary from '../ErrorBoundary'
+
 import './index.css'
 
 const apiStatusConstants = {
@@ -13,10 +17,21 @@ const apiStatusConstants = {
 }
 
 class UserList extends Component {
-  state = {apiStatus: apiStatusConstants.initial, users: [], error: ''}
+  state = {
+    apiStatus: apiStatusConstants.initial,
+    users: [],
+    error: '',
+    addClicked: false,
+  }
 
   componentDidMount() {
     this.getUsersApi()
+  }
+
+  changeAddStatus = () => {
+    this.setState(prevState => ({
+      addClicked: !prevState.addClicked
+    }))
   }
 
   getUsersApi = async () => {
@@ -47,16 +62,15 @@ class UserList extends Component {
     />
   )
 
-
   // User component used to generate each user. Defined within the same class for better understanding
-  User = data => {                   
+  User = data => {
     const {userDetails} = data
     const {id, name} = userDetails
     const {users} = this.state
 
     const onDelUser = () => {
       const newList = users.filter(user => user.id !== id)
-      this.setState({users: newList})
+      this.setState({users: newList, error: `User ${id} is deleted`})
       console.log(`user id-${id} deleted...`)
     }
 
@@ -86,22 +100,29 @@ class UserList extends Component {
   }
 
   successView = () => {
-    const {users} = this.state
+    const {users, error} = this.state
 
     return (
-        <>{users.length === 0? <p className='warn-msg'>Nothing here for now</p>:
-      <ul className="users-container">
-        {users.map(info => (
-          <this.User key={info.id} userDetails={info} />
-        ))}
-      </ul>}
+      <>
+        {error !== '' &&
+           <p className="event-result">{error}</p>}
+
+        {users.length === 0 ? (
+          <p className="warn-msg">Nothing here for now</p>
+        ) : (
+          <ul className="users-container">
+            {users.map(info => (
+              <this.User key={info.id} userDetails={info} />
+            ))}
+          </ul>
+        )}
       </>
-    )  
+    )
   }
 
   failureView = () => {
     const {error} = this.state
-
+    console.log(error)
     return <p className="warn-msg">{error}</p>
   }
 
@@ -119,17 +140,24 @@ class UserList extends Component {
   }
 
   render() {
-    const {error, apiStatus} = this.state
-    console.log(apiStatus, error)
+    const {apiStatus, addClicked} = this.state
+    console.log(apiStatus)
     return (
       <div className="main-container">
         <div className="header">
           <h1 className="main-heading">User Management Dashboard</h1>
-          <button type="button" className="add-btn">
-            Add
+          <button
+            type="button"
+            className={addClicked?"back-btn add-btn" :"add-btn"} 
+            onClick={this.changeAddStatus}
+          >
+            {addClicked ? 'Go back' : 'Add user'}
           </button>
         </div>
-        <div className="content-container">{this.renderViewOnApiStatus()}</div>
+
+        <div className="content-container">
+          {addClicked === false ? this.renderViewOnApiStatus() : <UserForm />}
+        </div>
       </div>
     )
   }
