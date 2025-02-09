@@ -6,8 +6,6 @@ import axios from 'axios'
 
 import UserForm from '../UserForm'
 
-import ErrorBoundary from '../ErrorBoundary'
-
 import './index.css'
 
 const apiStatusConstants = {
