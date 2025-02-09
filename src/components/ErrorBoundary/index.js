@@ -1,11 +1,11 @@
 import './index.css'
 
-const fieldsChecked = []
+const fieldsChecked = []   // Using const variable instead of class component for make it simple
 const ErrorBoundary = props => {
   const {id, firstName, lastName, email, department, isSubmitted} = props
 
   const validate = () => {
-    if (id !== undefined) {
+    if (id !== undefined) {       // on getting each field entered value. validation takes place 
       const condition = /^\d+$/.test(id)
       if (id.length > 0 && condition === false) {
         fieldsChecked[0] = 0
@@ -39,10 +39,10 @@ const ErrorBoundary = props => {
         fieldsChecked[2] = 0
       }
     } else if (email !== undefined) {
-      const condition = /^[a-zA-Z0-9]+@gmail\.com$/.test(email)
+      const condition = /^[a-zA-Z@._]+$/.test(email)
       if (email.length > 0 && condition === false) {
         fieldsChecked[3] = 0
-        return <p className='verify-msg'>should end with @gmail.com</p>
+        return <p className='verify-msg'>can have alphabets,@,. only</p>
       }
       if (condition) {
         fieldsChecked[3] = 1
@@ -50,17 +50,17 @@ const ErrorBoundary = props => {
         fieldsChecked[3] = 0
       }
     } else if (department !== undefined) {
-      const condition = /^[A-Za-z]+$/.test(department)
+      const condition = /^[a-zA-Z\s-]+$/.test(department)
       if (department.length > 0 && condition === false) {
         fieldsChecked[4] = 0
-        return <p className='verify-msg'>provide alphabets only</p>
+        return <p className='verify-msg'>can have alphabets,-,spaces only</p>
       }
       if (condition) {
         fieldsChecked[4] = 1
       } else {
         fieldsChecked[4] = 0
       }
-    } else if (isSubmitted) {
+    } else if (isSubmitted) {              // on submit form. warns for empty fields 
       return <p className='verify-msg'>*Required</p>
     }
     return null

@@ -50,12 +50,15 @@ input {
   color: green;
   margin: 3px;
   text-align: center;
+  font-weight: 500;
+  font-size: 18px;
 }
 
 .failed-msg {
   color: red;
   margin: 3px;
   text-align: center;
+  font-size: 18px;
 }
 
 .not-submitted {
@@ -63,6 +66,7 @@ input {
   margin-top: 10px;
   margin-bottom: 10px;
   text-align: center;
+  font-size: 18px;
 }
 
 .clr-btn{
