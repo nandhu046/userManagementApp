@@ -8,7 +8,6 @@ import {ErrorBoundary, fieldsChecked} from '../ErrorBoundary'
 
 import './index.css'
 
-
 class UserForm extends Component {
   state = {
     id: '',
@@ -21,8 +20,7 @@ class UserForm extends Component {
     apiError: '',
   }
 
-
-// to persist previous data we updating state after initail render
+  // to persist previous data we updating state after initial render
 
   componentDidMount() {
     const {editStatus} = this.props
@@ -72,7 +70,7 @@ class UserForm extends Component {
     })
   }
 
-  // clear form 
+  // clear form
 
   onClearForm = () => {
     this.setState({
@@ -86,8 +84,7 @@ class UserForm extends Component {
     })
   }
 
-
-  // to add new User we send data to UserList Component 
+  // to add new User we send data to UserList Component
 
   sendUserDetails = () => {
     const {addUser} = this.props
@@ -96,7 +93,7 @@ class UserForm extends Component {
     addUser(d)
   }
 
-// we send updated data of specific user data. to UserList
+  // we send updated data of specific user data. to UserList
 
   sendUpdatedData = () => {
     const {updateUser} = this.props
@@ -104,7 +101,6 @@ class UserForm extends Component {
     const d = {id, firstName, lastName, email, department}
     updateUser(d)
   }
-
 
   // based on form like 'add' or 'edit'. doing api call on Form submit
 
@@ -160,9 +156,7 @@ class UserForm extends Component {
     }
   }
 
-
-
-// on api status render view
+  // on api status render view
 
   renderFormSubmitResult = () => {
     const {apiStatus, apiError, submitted} = this.state
@@ -177,9 +171,14 @@ class UserForm extends Component {
         />
       )
     } else if (apiStatus === 'SUCCESS') {
-        const {editData, editStatus} = this.props
+      const {editData, editStatus} = this.props
       viewResult = (
-        <p className="success-msg"> {editStatus? `user Id - ${editData.id} updated successfully`: `added successfully with Id - ${newId}`}</p>
+        <p className="success-msg">
+          {' '}
+          {editStatus
+            ? `user Id - ${editData.id} updated successfully`
+            : `added successfully with Id - ${newId}`}
+        </p>
       )
     } else {
       viewResult = (
@@ -201,7 +200,8 @@ class UserForm extends Component {
       submitted,
       apiStatus,
     } = this.state
-    console.log(`api: ${apiStatus}`)
+    const {editStatus} = this.props
+    console.log({apiStatus})
 
     return (
       <form className="form" onSubmit={this.onSubmitForm}>
@@ -260,9 +260,11 @@ class UserForm extends Component {
         ) : (
           <ErrorBoundary department={department} />
         )}
-        <button type="button" className="clr-btn" onClick={this.onClearForm}>
-          Clear
-        </button>
+        {editStatus === false && (
+          <button type="button" className="clr-btn" onClick={this.onClearForm}>
+            Clear
+          </button>
+        )}
         <button
           type="submit"
           className="submit-btn"

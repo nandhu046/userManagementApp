@@ -2,10 +2,10 @@ import './index.css'
 
 const fieldsChecked = []   // Using const variable instead of class component for make it simple
 const ErrorBoundary = props => {
-  const {id, firstName, lastName, email, department, isSubmitted} = props
+  const {id=null, firstName=null, lastName=null, email=null, department=null, isSubmitted=null} = props
 
   const validate = () => {
-    if (id !== undefined) {       // on getting each field entered value. validation takes place 
+    if (id !== null) {       // on getting each field entered value. validation takes place 
       const condition = /^\d+$/.test(id)
       if (id.length > 0 && condition === false) {
         fieldsChecked[0] = 0
@@ -16,7 +16,7 @@ const ErrorBoundary = props => {
       } else {
         fieldsChecked[0] = 0
       }
-    } else if (firstName !== undefined) {
+    } else if (firstName !== null) {
       const condition = /^[A-Za-z]+$/.test(firstName)
       if (firstName.length > 0 && condition === false) {
         fieldsChecked[1] = 0
@@ -27,7 +27,7 @@ const ErrorBoundary = props => {
       } else {
         fieldsChecked[1] = 0
       }
-    } else if (lastName !== undefined) {
+    } else if (lastName !== null) {
       const condition = /^[A-Za-z]+$/.test(lastName)
       if (lastName.length > 0 && condition === false) {
         fieldsChecked[2] = 0
@@ -37,9 +37,9 @@ const ErrorBoundary = props => {
         fieldsChecked[2] = 1
       } else {
         fieldsChecked[2] = 0
-      }
-    } else if (email !== undefined) {
-      const condition = /^[a-zA-Z@._]+$/.test(email)
+      } 
+    } else if (email !== null) {
+      const condition = /^[a-zA-Z@._0-9]+$/.test(email)
       if (email.length > 0 && condition === false) {
         fieldsChecked[3] = 0
         return <p className='verify-msg'>can have alphabets,@,. only</p>
@@ -49,7 +49,7 @@ const ErrorBoundary = props => {
       } else {
         fieldsChecked[3] = 0
       }
-    } else if (department !== undefined) {
+    } else if (department !== null) {
       const condition = /^[a-zA-Z\s-]+$/.test(department)
       if (department.length > 0 && condition === false) {
         fieldsChecked[4] = 0

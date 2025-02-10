@@ -14,9 +14,51 @@ const apiStatusConstants = {
   failure: 'FAILURE',
 }
 
-let addedUserId
+let addedUserId = null
+let editUserId = null
 
-let editUserId
+// User component generates each user UI.
+
+const User = data => {
+  const {userDetails, users, getEditStatus, onDeleteGetUsers} = data
+  const {id, name} = userDetails
+
+  // edit click makes form shown by this state update
+  const onEditUser = () => {
+    getEditStatus()
+    editUserId = id
+  }
+
+  // Delete user and update user List
+  const onDelUser = () => {
+    const newList = users.filter(user => user.id !== id)
+    onDeleteGetUsers(id, newList)
+  }
+
+  return (
+    <>
+      <li className="list-item">
+        <div className="info-container">
+          <p>{id}.</p>
+          <p className="name">{name}</p>
+        </div>
+        <div className="edit-container">
+          <button type="button" className="edit-btn" onClick={onEditUser}>
+            Edit
+          </button>
+          <button
+            type="button"
+            className="edit-btn del-btn"
+            onClick={onDelUser}
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+      <hr className="hr-line" />
+    </>
+  )
+}
 
 class UserList extends Component {
   state = {
@@ -27,9 +69,13 @@ class UserList extends Component {
     editClicked: false,
   }
 
+  // start API call
+
   componentDidMount() {
     this.getUsersApi()
   }
+
+  // button click changes active tab to display
 
   changeStatus = () => {
     const {addClicked, editClicked} = this.state
@@ -42,14 +88,12 @@ class UserList extends Component {
       }))
     } else {
       this.setState({
-        editClicked: false,               // change both button status with single button-'back'
+        editClicked: false, // change both button status with single button-'back'
       })
     }
   }
 
-
   // initial users API
-
   getUsersApi = async () => {
     try {
       const response = await axios.get(
@@ -62,6 +106,7 @@ class UserList extends Component {
         email: i.email,
         department: i.company.name,
       }))
+
       this.setState({users: modifyData, apiStatus: apiStatusConstants.success})
     } catch (errObj) {
       this.setState({
@@ -71,9 +116,7 @@ class UserList extends Component {
     }
   }
 
-
   // add Api after all fields validation done
-
   addNewUser = newUser => {
     const {users} = this.state
 
@@ -97,7 +140,7 @@ class UserList extends Component {
     }
   }
 
-// updating object which is 'edited' remaining will be same
+  // updating object which is 'edited' remaining will be same
 
   updateUserData = updatedData => {
     const {users} = this.state
@@ -117,7 +160,6 @@ class UserList extends Component {
     this.setState({users: [...usersList]})
   }
 
-
   // specific function to render Loading view on api call
 
   loadingView = () => (
@@ -133,65 +175,43 @@ class UserList extends Component {
     />
   )
 
-  // User component used to generate each user. Defined within the same class for better understanding
+  // update state on 'edit click'
 
-  User = data => {
-    const {userDetails} = data
-    const {id, name} = userDetails
-    const {users} = this.state
-
-    const onEditUser = () => {
-      this.setState({editClicked: true})   // edit click makes form shown by this state update
-      editUserId = id
-    }
-
-    const onDelUser = () => {               // Delete user and update user List
-      const newList = users.filter(user => user.id !== id)
-      this.setState({users: newList, error: `User ${id} is deleted`})
-      console.log(`user id-${id} deleted...`)   
-    }
-
-    return (
-      <>
-        <li className="list-item">
-          <div className="info-container">
-            <p>{id}.</p>
-            <p className="name">{name}</p>
-          </div>
-          <div className="edit-container">
-            <button type="button" className="edit-btn" onClick={onEditUser}>
-              Edit
-            </button>
-            <button
-              type="button"
-              className="edit-btn del-btn"
-              onClick={onDelUser}
-            >
-              Delete
-            </button>
-          </div>
-        </li>
-        <hr className="hr-line" />
-      </>
-    )
+  onEdit = () => {
+    this.setState({editClicked: true})
   }
 
+  // update state on 'delete click'
 
-  // render each user in list on success
+  onDelete = (id, newList) => {
+    this.setState({users: newList, error: `User ${id} is deleted`})
+    console.log(`user id-${id} deleted...`)
+  }
+
+  // rendering list of users on 'success'
 
   successView = () => {
     const {users, error} = this.state
 
+    users.sort((a, b) => a.id - b.id)
+    
+    
     return (
       <>
-        {error !== '' && <p className="event-result">{error}</p>}
+        {(error !== '' && users.length >= 1) && <p className="event-result">{error}</p>}
 
         {users.length === 0 ? (
           <p className="warn-msg">Nothing here for now</p>
         ) : (
           <ul className="users-container">
             {users.map(info => (
-              <this.User key={info.id} userDetails={info} />
+              <User
+                key={info.id}
+                userDetails={info}
+                users={users}
+                getEditStatus={this.onEdit}
+                onDeleteGetUsers={this.onDelete}
+              />
             ))}
           </ul>
         )}
@@ -199,7 +219,7 @@ class UserList extends Component {
     )
   }
 
-// on api failure
+  // on api failure
 
   failureView = () => {
     const {error} = this.state
@@ -207,7 +227,9 @@ class UserList extends Component {
     return <p className="warn-msg">{error}</p>
   }
 
-  renderViewOnApiStatus = () => {    // render view on api status
+  // render specific view on api status
+
+  renderViewOnApiStatus = () => {
     const {apiStatus} = this.state
     let uiToDisplay
     if (apiStatus === 'SUCCESS') {
@@ -224,7 +246,7 @@ class UserList extends Component {
     const {apiStatus, addClicked, users, editClicked} = this.state
     console.log(`get api: ${apiStatus}`)
     const editUserData =
-      editUserId !== undefined && users.filter(i => i.id === editUserId)[0]
+      editUserId !== null && users.filter(i => i.id === editUserId)[0]
     console.log(users)
     return (
       <div className="main-container">
@@ -251,10 +273,10 @@ class UserList extends Component {
               editStatus={editClicked}
               editData={editUserData}
               updateUser={this.updateUserData}
-            />                  
+            />
             // on any button click form will be displayed
-          )} 
-        </div>    
+          )}
+        </div>
       </div>
     )
   }

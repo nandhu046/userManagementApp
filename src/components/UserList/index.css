@@ -136,11 +136,11 @@
   color: white;
   margin: 10px;
   margin-bottom: 0px;
-  font-size: 23px;
+  font-size: 18px;
   font-weight: 500;
   width: 100%;
   border-radius: 5px;
-  padding: 10px;
+  padding: 8px;
   text-align: center;
 }
 
@@ -149,8 +149,23 @@
     .main-heading{
         font-size: 20px;
     }
+    
     .add-btn{
         padding: 10px;
         margin-top: 10px;
+    }
+    .header{
+        justify-content: space-around;
+    }
+}
+
+
+
+@media screen and (min-width: 768px){
+    .header{
+        padding-right: 50px;
+    }
+    .name{
+        padding-left: 30px;
     }
 }

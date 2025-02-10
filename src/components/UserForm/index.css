@@ -85,4 +85,13 @@ input {
   .form{
       width: 50%;
   }
+  .success-msg{
+      font-size: 20px;
+  }
+  .failed-msg{
+      font-size: 20px;
+  }
+  .not-submitted{
+      font-size: 20px;
+  }
 }
